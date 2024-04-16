@@ -1,0 +1,25 @@
+---
+- name: Update CentOS and Install Application
+  hosts: dev
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Update the package repository cache
+      yum:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Install git
+      yum:
+        name: git
+        state: present
+
+    - name: Configure Vim using role
+      import_role:
+          name: vim
+
+

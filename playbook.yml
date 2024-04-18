@@ -13,13 +13,24 @@
         name: '*'
         state: latest
 
+    - name: Check if git is installed
+      command: "rpm -q git-core"
+      register: git_check
+      ignore_errors: true
+
     - name: Install git
       yum:
         name: git
         state: present
+      when: git_check.rc != 0
+
+    - name: Check if Vim is installed
+      command: "rpm -q vim-enhanced"
+      register: vim_check
+      ignore_errors: true
 
     - name: Configure Vim using role
       import_role:
           name: vim
-
+      when: vim_check.rc != 0
 

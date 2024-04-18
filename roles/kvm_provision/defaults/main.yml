@@ -2,7 +2,7 @@
 # defaults file for kvm_provision
 base_image_name: CentOS-Stream-GenericCloud-9-latest.x86_64.qcow2
 base_image_url: https://cloud.centos.org/centos/9-stream/x86_64/images/{{ base_image_name }}
-bse_image_sha: "{{ base_image_url }}.SHA256SUM"
+base_image_sha: "{{ base_image_url }}.SHA256SUM"
 libvirt_pool_dir: "/var/lib/libvirt/images"
 vm_name: centos-dev
 vm_vcpus: 4

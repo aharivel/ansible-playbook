@@ -50,14 +50,20 @@
         msg: "Checksum verification failed for the downloaded image."
       when: checksum_result.rc != 0
 
+    - name: Create a larger QCOW2 image
+      command: "qemu-img create -f qcow2 -b /tmp/{{ base_image_name }} -F qcow2 /tmp/{{ vm_name }}.qcow2 10G"
+
     - name: Copy base image to libvirt directory
       copy:
+        src: "/tmp/{{ vm_name }}.qcow2"
         dest: "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
-        src: "/tmp/{{ base_image_name }}"
         force: no
         remote_src: yes
         mode: 0660
       register: copy_results
+
+    - name: Change to QEMU user
+      command: "chown qemu: {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
 
     - name: Configure the image
       command: |

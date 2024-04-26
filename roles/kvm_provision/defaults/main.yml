@@ -7,6 +7,11 @@ libvirt_pool_dir: "/var/lib/libvirt/images"
 vm_name: centos-dev
 vm_vcpus: 4
 vm_ram_mb: 4096
+vcpu_pinning:
+        0: 2
+        1: 3
+        2: 4
+        3: 5
 vm_net: default
 vm_root_pass: redhat
 cleanup_tmp: no

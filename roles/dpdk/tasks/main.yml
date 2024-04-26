@@ -1,0 +1,24 @@
+---
+# tasks file for dpdk
+- name: Check if /tmp/dpdk exist
+  stat:
+    path: "/tmp/dpdk"
+  register: dpdk_info
+
+- name: Clone a DPDK repository
+  git:
+    repo: https://github.com/DPDK/dpdk.git
+    dest: /tmp/dpdk/
+  when: dpdk_info.stat.exists == False
+
+- name: Configure the DPDK
+  shell: |
+    cd /tmp/dpdk
+    meson build --prefix=/usr -Dtests=false -Denable_drivers=net/virtio,vhost -Denable_apps=test-pmd -Ddisable_libs=ipsec,fib,rib,regexdev,pcapng,table,gpudev,compressdev,cryptodev,bpf,bbdev
+
+- name: Compile and install DPDK
+  shell: |
+    ninja -C /tmp/dpdk/build install
+
+
+

@@ -71,7 +71,14 @@
         --hostname {{ vm_name }} \
         --root-password password:{{ vm_root_pass }} \
         --ssh-inject 'root:file:{{ ssh_key }}' \
-        --uninstall cloud-init --selinux-relabel
+        --uninstall cloud-init \
+        --run-command 'setenforce 0 || :' \
+        --run-command 'sed -i "s/^SELINUX=.*/SELINUX=permissive/" /etc/selinux/config' \
+        --run-command 'dnf config-manager --set-enabled crb' \
+        --run-command 'dnf config-manager --set-enabled extras-common' \
+        --install git,meson,ninja-build,python3-pyelftools,gcc,glibc-static,numactl-libs,numactl-devel,pciutils,tmux \
+        --run-command 'grubby --update-kernel=ALL --args="iommu=pt intel_iommu=on default_hugepagesz=1G hugepagesz=1G hugepages=4"' \
+        --run-command 'grub2-mkconfig -o /etc/grub2.cfg'
       when: copy_results is changed
 
     - name: Define vm

@@ -4,6 +4,11 @@
   become: yes
   gather_facts: yes
   tasks:
+    - name: Install the EPEL-release package
+      yum:
+        name: epel-release
+        state: present
+
     - name: Update the package repository cache
       yum:
         update_cache: yes

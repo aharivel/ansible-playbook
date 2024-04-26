@@ -1,0 +1,49 @@
+<domain type="kvm">
+  <name>{{ vm_name }}</name>
+  <memory unit='MiB'>{{ vm_ram_mb }}</memory>
+  <vcpu placement='static'>{{vcpu_pinning|length}}</vcpu>
+  <cputune>
+    {% for vcpu, cpu in vcpu_pinning.items() %}
+    <vcpupin vcpu='{{vcpu}}' cpuset='{{cpu}}'/>
+    {% endfor %}
+  </cputune>
+  <cpu mode='host-passthrough' check='none' migratable='off'>
+    <numa>
+      <cell id='0' cpus='{{vcpu_pinning.keys()|join(",")}}' memory='{{vm_memory}}' unit='kib' memaccess='shared'/>
+    </numa>
+  </cpu>
+  <os>
+    <type arch='x86_64' machine='q35'>hvm</type>
+    <boot dev='hd'/>
+  </os>
+  <devices>
+    <serial type='pty'>
+      <target port='0'/>
+    </serial>
+    <console type='pty'>
+      <target type='serial' port='0'/>
+    </console>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2'/>
+      <target dev='vda' bus='virtio'/>
+    </disk>
+    <interface type='bridge'>
+      <source bridge='virbr0'/>
+      <model type='virtio-net'/>
+      <mac address='54:ba:dd:ca:ca:0$n'/>
+    </interface>
+    <interface type='network'>
+      <mac address='54:00:00:ca:ca:0$n'/>
+      <source network='dpdk-br0'/>
+      <model type='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x10' slot='0x00' function='0x0'/>
+    </interface>
+     <interface type='network'>
+      <mac address='54:00:00:ca:ca:1$n'/>
+      <source network='dpdk-br1'/>
+      <model type='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x10' slot='0x00' function='0x1'/>
+    </interface>
+    </devices>
+</domain>

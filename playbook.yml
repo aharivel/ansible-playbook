@@ -39,3 +39,6 @@
           name: vim
       when: vim_check.rc != 0
 
+    - name: Install DPDK
+      import_role:
+          name: dpdk
